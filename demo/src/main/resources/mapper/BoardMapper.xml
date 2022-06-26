@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.BoardMapper">
+
+
+    <insert id="setBoard" parameterType="com.example.demo.vo.BoardVo">
+        INSERT INTO board_list (
+            board_title
+            , board_content
+            , writer
+            , pw
+            , categorys
+        )VALUES (
+            #{boardTitle}
+            , #{boardContent}
+            , #{writer}
+            , #{pw}
+            , #{categorys}
+        )
+    </insert>
+
+    <select id="getBoard" parameterType="int" resultType="com.example.demo.vo.BoardVo">
+        SELECT *
+        FROM board_list
+        WHERE board_id = #{boardId}
+    </select>
+
+    <select id="getBoardList" parameterType="hashmap" resultType="com.example.demo.vo.BoardVo" >
+        SELECT *
+        FROM board_list
+        ORDER BY reg_date DESC
+    </select>
+
+    <select id="getSearchBoardList" resultType="com.example.demo.vo.BoardVo" >
+
+        SELECT *
+        FROM board_list
+        <choose>
+            <when test='condition == "boardTitle" and startDate != null and endDate != null'>
+                WHERE board_title LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <when test='condition == "writer"and startDate != null and endDate != null'>
+                WHERE writer LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <when test='condition == "boardContent"and startDate != null and endDate != null'>
+                WHERE board_content LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <when test='condition == "titleWriterContent"and startDate != null and endDate != null'>
+                WHERE board_title LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+                OR writer  LIKE %#{keyword}%
+                OR board_content  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "boardTitle"'>
+                WHERE board_title  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "writer"'>
+                WHERE writer  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "boardContent"'>
+                WHERE board_content  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "titleWriterContent"'>
+                WHERE board_title  LIKE %#{keyword}%
+                OR writer  LIKE %#{keyword}%
+                OR board_content  LIKE %#{keyword}%
+            </when>
+            <when test='startDate != "" and endDate != ""'>
+                WHERE reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <otherwise> WHERE 1=1 </otherwise>
+        </choose>
+
+        ORDER BY reg_date DESC
+            LIMIT #{startPage},#{countPerPage}
+
+    </select>
+
+    <select id="boardListCnt" resultType="int">
+        SELECT count(*)
+        FROM board_list
+    </select>
+
+
+    <select id="searchBoardListCnt" resultType="int">
+        SELECT count(*)
+        FROM board_list
+        <choose>
+            <when test='condition == "boardTitle" and startDate != null and endDate != null'>
+                WHERE board_title LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <when test='condition == "writer"and startDate != null and endDate != null'>
+                WHERE writer LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <when test='condition == "boardContent"and startDate != null and endDate != null'>
+                WHERE board_content LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <when test='condition == "titleWriterContent"and startDate != null and endDate != null'>
+                WHERE board_title LIKE %#{keyword}% AND  reg_date BETWEEN #{startDate} AND #{endDate}
+                OR writer  LIKE %#{keyword}%
+                OR board_content  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "boardTitle"'>
+                WHERE board_title  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "writer"'>
+                WHERE writer  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "boardContent"'>
+                WHERE board_content  LIKE %#{keyword}%
+            </when>
+            <when test='condition == "titleWriterContent"'>
+                WHERE board_title  LIKE %#{keyword}%
+                OR writer  LIKE %#{keyword}%
+                OR board_content  LIKE %#{keyword}%
+            </when>
+            <when test='startDate != "" and endDate != ""'>
+                WHERE reg_date BETWEEN #{startDate} AND #{endDate}
+            </when>
+            <otherwise> WHERE 1=1 </otherwise>
+        </choose>
+
+    </select>
+
+
+    <update id="viewCountAdd" parameterType="com.example.demo.vo.BoardVo">
+        UPDATE board_list
+        SET views = views+1
+        WHERE board_id = ${boardId}
+    </update>
+
+    <delete id="deleteBoard" parameterType="com.example.demo.vo.BoardVo">
+        DELETE FROM board_list
+        WHERE board_id = ${boardId}
+    </delete>
+
+    <update id="boardUpdate" parameterType="com.example.demo.vo.BoardVo">
+        UPDATE board_list
+        SET board_title = "${boardTitle}", board_content = "${boardContent}",writer = "${writer}", pw = "${pw}" , rewrite_date = NOW()
+        WHERE board_id = ${boardId}
+    </update>
+
+
+
+</mapper>

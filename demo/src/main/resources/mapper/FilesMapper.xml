@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.FilesMapper">
+
+
+    <insert id="setFiles" parameterType="com.example.demo.vo.FilesVo">
+        INSERT INTO files (
+            board_id
+            , files_name
+            , files_realname
+            , files_path
+        )
+        VALUES (
+            #{boardId}
+            , #{filesName}
+            , #{filesRealname}
+            , #{filesPath}
+        )
+    </insert>
+
+    <select id="getFilesList" resultType="com.example.demo.vo.FilesVo" >
+        SELECT *
+        FROM files
+        WHERE board_id = ${boardId}
+    </select>
+
+    <select id="getFiles" parameterType="int" resultType="com.example.demo.vo.FilesVo" >
+        SELECT *
+        FROM files
+        WHERE files_id = ${filesId}
+    </select>
+
+
+    <delete id="deleteFiles" parameterType="com.example.demo.vo.FilesVo" >
+        DELETE FROM files
+        WHERE files_id = ${filesId}
+    </delete>
+
+</mapper>
